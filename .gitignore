@@ -1,0 +1,36 @@
+# Python/Django related
+__pycache__/
+*.py[cod]
+*.sqlite3         # if using SQLite for local dev
+db.sqlite3        # common SQLite DB file
+
+# Env and IDE configs
+.env
+.env.*
+*.env
+
+# Django media and static files
+media/
+staticfiles/      # if collected here during collectstatic
+
+# Node dependencies (Tailwind, PostCSS, etc.)
+node_modules/
+
+# Tailwind and build artifacts
+theme/static/css/dist/  # Compiled CSS output folder (optional if generated during build)
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Virtual environment
+venv/
+.env/
+ENV/
+
+# IDE folders (optional)
+.vscode/
+.idea/
