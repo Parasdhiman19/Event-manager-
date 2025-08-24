@@ -1,21 +1,13 @@
 /*! tailwindcss v4.1.12 | MIT License | https://tailwindcss.com */
-@layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
-    --color-gray-50: oklch(98.5% 0.002 247.839);
     --color-black: #000;
     --color-white: #fff;
-    --spacing: 0.25rem;
-    --text-5xl: 3rem;
-    --text-5xl--line-height: 1;
-    --tracking-normal: 0em;
-    --leading-normal: 1.5;
     --default-font-family: var(--font-sans);
     --default-mono-font-family: var(--font-mono);
   }
@@ -222,208 +214,55 @@
       border-color: color-mix(in oklab, var(--color-base-content) 5%, transparent);
     }
   }
-  .toast {
-    position: fixed;
-    inset-inline-start: auto;
-    inset-inline-end: calc(0.25rem * 4);
-    top: auto;
-    bottom: calc(0.25rem * 4);
-    display: flex;
-    flex-direction: column;
-    gap: calc(0.25rem * 2);
-    background-color: transparent;
-    translate: var(--toast-x, 0) var(--toast-y, 0);
-    width: max-content;
-    max-width: calc(100vw - 2rem);
-  }
-  .toast > * {
-    animation: toast 0.25s ease-out;
-  }
-  .toast:where(.toast-start) {
-    inset-inline-start: calc(0.25rem * 4);
-    inset-inline-end: auto;
-    --toast-x: 0;
-  }
-  .toast:where(.toast-center) {
-    inset-inline-start: calc(1/2 * 100%);
-    inset-inline-end: calc(1/2 * 100%);
-    --toast-x: -50%;
-  }
-  .toast:where(.toast-end) {
-    inset-inline-start: auto;
-    inset-inline-end: calc(0.25rem * 4);
-    --toast-x: 0;
-  }
-  .toast:where(.toast-bottom) {
-    top: auto;
-    bottom: calc(0.25rem * 4);
-    --toast-y: 0;
-  }
-  .toast:where(.toast-middle) {
-    top: calc(1/2 * 100%);
-    bottom: auto;
-    --toast-y: -50%;
-  }
-  .toast:where(.toast-top) {
-    top: calc(0.25rem * 4);
-    bottom: auto;
-    --toast-y: 0;
-  }
   .static {
     position: static;
   }
-  .container {
-    width: 100%;
-  }
-  @media (width >= 40rem) {
-    .container {
-      max-width: 40rem;
-    }
-  }
-  @media (width >= 48rem) {
-    .container {
-      max-width: 48rem;
-    }
-  }
-  @media (width >= 64rem) {
-    .container {
-      max-width: 64rem;
-    }
-  }
-  @media (width >= 80rem) {
-    .container {
-      max-width: 80rem;
-    }
-  }
-  @media (width >= 96rem) {
-    .container {
-      max-width: 96rem;
-    }
-  }
-  .mx-auto {
-    margin-inline: auto;
-  }
-  .alert {
-    display: grid;
-    align-items: center;
-    gap: calc(0.25rem * 4);
-    border-radius: var(--radius-box);
-    padding-inline: calc(0.25rem * 4);
-    padding-block: calc(0.25rem * 3);
-    color: var(--color-base-content);
-    background-color: var(--alert-color, var(--color-base-200));
-    justify-content: start;
-    justify-items: start;
-    grid-auto-flow: column;
-    grid-template-columns: auto;
-    text-align: start;
-    border: var(--border) solid var(--color-base-200);
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    background-size: auto, calc(var(--noise) * 100%);
-    background-image: none, var(--fx-noise);
-    box-shadow: 0 3px 0 -2px oklch(100% 0 0 / calc(var(--depth) * 0.08)) inset, 0 1px #000, 0 4px 3px -2px oklch(0% 0 0 / calc(var(--depth) * 0.08));
+  .status {
+    display: inline-block;
+    aspect-ratio: 1 / 1;
+    width: calc(0.25rem * 2);
+    height: calc(0.25rem * 2);
+    border-radius: var(--radius-selector);
+    background-color: var(--color-base-content);
   }
   @supports (color: color-mix(in lab, red, red)) {
-    .alert {
-      box-shadow: 0 3px 0 -2px oklch(100% 0 0 / calc(var(--depth) * 0.08)) inset, 0 1px color-mix( in oklab, color-mix(in oklab, #000 20%, var(--alert-color, var(--color-base-200))) calc(var(--depth) * 20%), #0000 ), 0 4px 3px -2px oklch(0% 0 0 / calc(var(--depth) * 0.08));
+    .status {
+      background-color: color-mix(in oklab, var(--color-base-content) 20%, transparent);
     }
   }
-  .alert:has(:nth-child(2)) {
-    grid-template-columns: auto minmax(auto, 1fr);
-  }
-  .alert.alert-outline {
-    background-color: transparent;
-    color: var(--alert-color);
-    box-shadow: none;
-    background-image: none;
-  }
-  .alert.alert-dash {
-    background-color: transparent;
-    color: var(--alert-color);
-    border-style: dashed;
-    box-shadow: none;
-    background-image: none;
-  }
-  .alert.alert-soft {
-    color: var(--alert-color, var(--color-base-content));
-    background: var(--alert-color, var(--color-base-content));
+  .status {
+    background-position: center;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    color: color-mix(in srgb, #000 30%, transparent);
   }
   @supports (color: color-mix(in lab, red, red)) {
-    .alert.alert-soft {
-      background: color-mix( in oklab, var(--alert-color, var(--color-base-content)) 8%, var(--color-base-100) );
+    .status {
+      color: color-mix(in srgb, #000 30%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .status {
+        color: color-mix(in oklab, var(--color-black) 30%, transparent);
+      }
     }
   }
-  .alert.alert-soft {
-    border-color: var(--alert-color, var(--color-base-content));
+  .status {
+    background-image: radial-gradient( circle at 35% 30%, oklch(1 0 0 / calc(var(--depth) * 0.5)), #0000 );
+    box-shadow: 0 2px 3px -1px currentColor;
   }
   @supports (color: color-mix(in lab, red, red)) {
-    .alert.alert-soft {
-      border-color: color-mix( in oklab, var(--alert-color, var(--color-base-content)) 10%, var(--color-base-100) );
+    .status {
+      box-shadow: 0 2px 3px -1px color-mix(in oklab, currentColor calc(var(--depth) * 100%), #0000);
     }
-  }
-  .alert.alert-soft {
-    box-shadow: none;
-    background-image: none;
   }
   .block {
     display: block;
   }
-  .flex {
-    display: flex;
-  }
-  .h-100 {
-    height: calc(var(--spacing) * 100);
-  }
-  .h-full {
-    height: 100%;
-  }
-  .h-max {
-    height: max-content;
-  }
-  .h-screen {
-    height: 100vh;
-  }
   .min-h-screen {
     min-height: 100vh;
   }
-  .w-max {
-    width: max-content;
-  }
-  .items-center {
-    align-items: center;
-  }
-  .justify-center {
-    justify-content: center;
-  }
-  .alert-info {
-    border-color: var(--color-info);
-    color: var(--color-info-content);
-    --alert-color: var(--color-info);
-  }
-  .bg-gray-50 {
-    background-color: var(--color-gray-50);
-  }
   .bg-white {
     background-color: var(--color-white);
-  }
-  .p-10 {
-    padding: calc(var(--spacing) * 10);
-  }
-  .font-serif {
-    font-family: var(--font-serif);
-  }
-  .text-5xl {
-    font-size: var(--text-5xl);
-    line-height: var(--tw-leading, var(--text-5xl--line-height));
-  }
-  .leading-normal {
-    --tw-leading: var(--leading-normal);
-    line-height: var(--leading-normal);
-  }
-  .tracking-normal {
-    --tw-tracking: var(--tracking-normal);
-    letter-spacing: var(--tracking-normal);
   }
   .text-black {
     color: var(--color-black);
@@ -651,21 +490,5 @@
   }
   100% {
     background-position: -50%;
-  }
-}
-@property --tw-leading {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-tracking {
-  syntax: "*";
-  inherits: false;
-}
-@layer properties {
-  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
-    *, ::before, ::after, ::backdrop {
-      --tw-leading: initial;
-      --tw-tracking: initial;
-    }
   }
 }

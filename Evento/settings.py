@@ -9,9 +9,11 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+from dotenv import load_dotenv 
 from pathlib import Path
 import os 
+load_dotenv()
+
 NPM_BIN_PATH ="npm.cmd"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -134,3 +136,15 @@ INTERNAL_IPS = [
     "127.0.0.1",
     "*",
 ]
+
+AUTH_USER_MODEL = 'core.MyUser'
+
+LOGIN_URL ="login"
+LOGIN_REDIRECT_URL ='home'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
