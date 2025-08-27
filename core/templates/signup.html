@@ -1,53 +1,108 @@
-{% extends "base.html" %} {% block title %} signup-page {% endblock %} 
-{% block content %}
-
-<form action="{%url 'request_otp'%}" method="post">
+{% extends "base.html" %} {% block title %} signup-page {% endblock %}
+ {% block content %}
+<form id="otp_getter" action="{%url 'request_otp'%}" method="post">
   {% csrf_token %}
   <label>Email</label><br />
   <input
+    id="email_field"
     type="email"
     name="email"
     value="{{ form.email.value|default:'' }}"
     required
   />
-  <button type="submit" >verify</button>
-  </form>
+  <button type="submit">verify</button>
+</form>
 
-<form method="POST" action="{% url 'signup' %}">
+<form id="signup_form" method="POST" action="{% url 'signup' %}">
   {% csrf_token %}
 
   <label>Username</label><br />
   <input
+    id="username_field"
     type="text"
     name="username"
     value="{{ form.username.value|default:'' }}"
     required
   /><br /><br />
-  <label>Email</label><br />
-  <input
-    type="email"
-    name="email"
-    value="{{ form.email.value|default:'' }}"
-    required
-  />
 
-  
-  
-  <br /><br />
-  
   <label>otp</label><br />
-  <input
-    type="text"
-    name="otp"
-    required
-    
-  /><br /><br />
+  <input id="otp_field" type="text" name="otp" required /><br /><br />
   <label>Password</label><br />
-  <input type="password" name="password1" required /><br /><br />
+  <input
+    id="password_field"
+    type="password"
+    name="password1"
+    required
+  /><br /><br />
 
   <label>Confirm Password</label><br />
-  <input type="password" name="password2" required /><br /><br />
+  <input
+    id="password2_field"
+    type="password"
+    name="password2"
+    required
+  /><br /><br />
 
   <button type="submit">Sign Up</button>
 </form>
+
+<script>
+  const csrftoken = document.querySelector(
+    "#otp_getter [name=csrfmiddlewaretoken]"
+  ).value;
+  const signup_crsftoken = document.querySelector(
+    "#signup_form [name=csrfmiddlewaretoken]"
+  ).value;
+  document
+    .getElementById("signup_form")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+      let data = {
+        username: document.getElementById("username_field").value,
+        otp: document.getElementById("otp_field").value,
+        password1: document.getElementById("password_field").value,
+        password2: document.getElementById("password2_field").value,
+      };
+      
+        let response = await fetch("/signup/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // sending JSON
+            "X-CSRFToken": signup_crsftoken,
+          },
+
+          body: JSON.stringify(data),
+        });
+        let data_from_res = await response.json()
+        if(data_from_res.address){
+          window.location.href = data_from_res.address
+        }      
+        else{
+          console.log(data_from_res.error)
+        }
+    });
+  document
+    .getElementById("otp_getter")
+    .addEventListener("submit", async function datasender(e) {
+      e.preventDefault();
+      let email = document.getElementById("email_field").value;
+      try {
+        let response = await fetch("/request_otp/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // sending JSON
+            "X-CSRFToken": csrftoken,
+            "X-Requested-With": "XMLHttpRequest",
+          },
+          body: JSON.stringify({
+            email: email,
+          }),
+        });
+        let data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
+    });
+</script>
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render , redirect ,HttpResponse
 from .forms import MyUserCreationForm
-from django.contrib.auth import login  , logout ,authenticate
+from django.contrib.auth import login  , logout ,authenticate 
 from django.contrib.auth.decorators import login_required
 from .forms import LoginForm
 from .models import MyUser , EmailOpt
@@ -9,34 +9,43 @@ from django.core.mail import send_mail
 from  django.conf import settings
 from django.utils import timezone
 from django.http import JsonResponse
+import json
 # Create your views here.
 @login_required
 def home(req):
-  return render(req , "home.html")
+  name = req.user.username
+  return render(req , "home.html" , {"name" : name})
 
 
 def request_otp_view(req):
+  data = json.loads(req.body)
+  email = data.get("email")
+  req.session["sesion_email"] = email
+
+
+ 
   if req.method == "POST":
-    email = req.POST.get("email")
+    if MyUser.objects.filter(email= email).exists():
+     return JsonResponse({"message" :'Email aleardy exists'})
+     
     otp = str(random.randint(100000, 999999))
     EmailOpt.objects.update_or_create(
       email = email ,
       defaults={"otp":otp,
-                "created_at": timezone.now()}
-      ,
+                "created_at": timezone.now(),
+                "opt_attempt" : 0},
       
     )
-    req.session["email"] = email
     send_mail(
       subject= 'Your otp code',
       message=f"your otp code is {otp} dont share it with anybody",
       from_email= settings.EMAIL_HOST_USER ,
       recipient_list=[email],
     )
-    return JsonResponse("OTP sent successfully!")
+    return JsonResponse({"message" : "OTP sent successfully!"})
   
   else :
-    return JsonResponse("Account aleaready exists login!")
+    return JsonResponse({"message" : "Invalid request method"})
   
   
 
@@ -46,31 +55,47 @@ def request_otp_view(req):
 
 
 def signup_view(req) :
-  if req.method == "POST":
+  if req.user.is_authenticated:   
+        return redirect("home") 
+  email = req.session.get("sesion_email" ,  "No email found")
 
-    form = MyUserCreationForm(req.POST)
-    email = req.POST.get("email")
-    otp_entered = req.POST.get("otp")
+  
+  
+
+  
+  if req.method == "POST":
+    if MyUser.objects.filter(email= email).exists():
+     return JsonResponse({"error" : 'Email aleardy exists'})
+    data = json.loads(req.body)
+
+
+    form = MyUserCreationForm(data)
+    otp_entered = data.get("otp")
+    
     try :
       email_otp = EmailOpt.objects.get(email=email)
     except EmailOpt.DoesNotExist:
-            return HttpResponse("No OTP was sent to this email.")
+            return JsonResponse({"error" :"No OTP was sent to this email."})
 
     if email_otp.is_expired():
-            return HttpResponse("OTP expired. Please request a new one.")
+            return JsonResponse({"error":"OTP expired. Please request a new one."})
 
-        # 2. Check OTP match
-    if email_otp.otp == otp_entered:
-            if form.is_valid():
-              user = form.save()
-              login(req , user)
-              
-            # ✅ OTP correct
-            # (Here you can create the user or allow signup)
-              email_otp.delete()  # optional: remove OTP after success
-              return redirect("home")
+    if email_otp.can_attempt() :
+      email_otp.opt_attempt += 1
+      if email_otp.otp == otp_entered:
+              if form.is_valid():
+                user = form.save(commit=False)
+                user.email = email
+                user.save()
+                login(req , user)
+                email_otp.delete() 
+                return JsonResponse({"address" : " "})
+      else:
+         email_otp.save()
+         return JsonResponse({"error" : "wrong otp code" } )
+      
     else:
-            return HttpResponse("Invalid OTP. Try again.")
+            return JsonResponse({"error" : "failed request a new otp"})
 
     
   else :
@@ -84,6 +109,8 @@ def logout_view(req):
 
 
 def login_view(req):
+  if req.user.is_authenticated:
+     return redirect('home')
   if req.method == "POST":
     form = LoginForm(req.POST)
     if form.is_valid() :
